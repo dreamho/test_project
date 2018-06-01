@@ -1,9 +1,4 @@
-{{--@include('_templates.header')--}}
-
-{{--@yield('content')--}}
-
-{{--@include('_templates.footer')--}}
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
@@ -12,7 +7,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @if(Auth::check()) <meta name="api_token" content="{{ Auth::user()->api_token }}"> @endif
+    @if(Auth::check()) <meta id="api" name="api_token" content="{{ Auth::user()->api_token }}"> @endif
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
@@ -25,6 +20,14 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Authorization': 'Bearer ' + $('meta[name="api_token"]').attr('content'),
+            }
+        });
+    </script>
 </head>
 <body>
 <div id="app">
@@ -90,5 +93,13 @@
 <!-- jQuery, loaded in the recommended protocol-less way -->
 <!-- more http://www.paulirish.com/2010/the-protocol-relative-url/ -->
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Authorization': 'Bearer ' + $('meta[name="api_token"]').attr('content'),
+        }
+    });
+</script>
 </body>
 </html>

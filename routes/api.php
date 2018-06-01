@@ -22,8 +22,3 @@ Route::middleware('auth:api')->get('edit/{id}', 'Api\SongApi@getById');
 Route::middleware('auth:api')->post('edit', 'Api\SongApi@edit');
 Route::middleware('auth:api')->get('delete/{id}', 'Api\SongApi@delete');
 
-//Route::get('get', 'Api\SongApi@get');
-//Route::post('save', 'Api\SongApi@save');
-//Route::get('edit/{id}', 'Api\SongApi@getById');
-//Route::post('edit', 'Api\SongApi@edit');
-//Route::get('delete/{id}', 'Api\SongApi@delete');

@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\SaveEditSong;
 use App\Http\Resources\Song as SongResource;
 use App\Http\Controllers\Controller;
 use App\Model\Song as SongModel;
@@ -16,21 +17,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * Class SongApi
+ * @package App\Http\Controllers\Api
+ */
 class SongApi extends Controller
 {
+    /**
+     * Return songs depending on status of logged user
+     * If is admin returns all songs, if is regular user returns only his songs
+     * @param Request $request
+     * @return SongResource collection
+     */
     public function get(Request $request)
     {
         $user = $request->user();
-        if($user->status == 'admin'){
-            $songs = SongModel::all();
-        }
         if($user->status == 'user'){
-            $songs = \App\User::find($user->id)->songs()->orderBy('created_at', 'desc')->get();
+            $songs = \App\Model\User::find($user->id)->songs()->orderBy('created_at', 'desc')->get();
+        }
+        elseif($user->status == 'admin'){
+            $songs = SongModel::all();
         }
         return SongResource::collection($songs);
     }
 
-    public function save(Request $request)
+    /**
+     * Save new song
+     * @param SaveEditSong $request
+     * @return SongResource|JsonResponse
+     */
+    public function save(SaveEditSong $request)
     {
         try {
             $user = $request->user();
@@ -45,6 +61,11 @@ class SongApi extends Controller
         }
     }
 
+    /**
+     * Get a song by id to fill the form for updating data
+     * @param int $id
+     * @return SongResource
+     */
     public function getById($id)
     {
         $song = SongModel::find($id);
@@ -52,29 +73,13 @@ class SongApi extends Controller
 
     }
 
-    public function edit(Request $request)
+    /**
+     * Updating song
+     * @param SaveEditSong $request
+     * @return SongResource|JsonResponse
+     */
+    public function edit(SaveEditSong $request)
     {
-        $data = [];
-        $data['artist'] = $request->artist;
-        $data['track'] = $request->track;
-        $data['link'] = $request->link;
-
-        $rules = [
-            'artist' => 'required',
-            'track' => 'required',
-            'link' => 'required',
-        ];
-        $res = Validator::make($data, $rules);
-        $errors = $res->errors()->toArray();
-        if (count($errors) > 0) {
-            foreach ($errors as $error) {
-                foreach ($error as $value) {
-                    $messages[] = $value;
-                }
-                $errors = ['message' => $messages];
-                return new JsonResponse($errors);
-            }
-        }
         try {
             $song = SongModel::find($request->id);
             $song->artist = $request->artist;
@@ -87,6 +92,10 @@ class SongApi extends Controller
         }
     }
 
+    /**
+     * Delete song by id
+     * @param int $id
+     */
     public function delete($id)
     {
         SongModel::destroy($id);

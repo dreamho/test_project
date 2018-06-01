@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                                <input id="api_token" type="hidden" class="form-control" name="api_token" value="{{ str_random(10) }}">
+
                         </div>
 
                         <div class="form-group row mb-0">

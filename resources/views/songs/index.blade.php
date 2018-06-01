@@ -8,7 +8,7 @@
         <h2>You are in the View: application/view/song/index.php (everything in this box comes from that file)</h2>
         <!-- add song form -->
             @if(Auth::check())
-            <div>
+            <div id="save_form">
                 <h3>Add a song</h3>
                 <form action="" method="POST">
                     <label>Artist</label>
@@ -31,7 +31,7 @@
                     <input class="form-control" type="text" name="track" value="" />
                     <label>Link</label>
                     <input class="form-control" type="text" name="link" value=""/>
-                    <input class="btn btn-block btn-primary" type="button" onclick='editSong(this.form)' name="submit_add_song" value="Edit"/>
+                    <input class="btn btn-block btn-primary" style="margin:20px 0px;" type="button" onclick='editSong(this.form)' name="submit_add_song" value="Edit"/>
                 </form>
             </div>
 
@@ -72,15 +72,12 @@
     <div id="all"></div>
     <script type="text/javascript">
 
-        // Start
-        // window.onload = function(){
-        //     get();
-        // }
 
         var tbody = document.getElementById('rows');
         var edit_form = document.getElementById('edit_form');
+        var save_form = document.getElementById('save_form');
         var msg = document.getElementById('msg');
-        var api = document.getElementsByTagName('meta')[4].content;
+        var api = document.getElementById('api').content;
 
         // Delete song
         function deleteSong(id) {
@@ -88,10 +85,8 @@
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4) {
-                    // var message = JSON.parse(this.responseText);
-                    // msg.innerHTML = message;
-                    // clearMsg();
-                    get();
+                    alert('Deleted');
+                    getSongs();
                 }
             }
             xhr.open("get", "/api/delete/" + id, true);
@@ -100,56 +95,47 @@
 
         }
 
-        // Save new song
+        // Save song
         function saveSong(form){
+
             var song = {};
-            song.artist = form.artist.value;
-            song.track = form.track.value;
-            song.link = form.link.value;
+                song.artist = form.artist.value;
+                song.track = form.track.value;
+                song.link = form.link.value;
+                $.ajax({
+                    type: "POST",
+                    url: "api/save",
+                    data: song,
+                    dataType: "json",
+                    success: function (data){
+                        alert('Saved');
+                        var song = data.data;
+                        var tr = $("<tr />");
+                        tr.append("<td>"+ song.id +"</td><td>"+ song.artist +"</td><td>"+ song.track +"</td><td>"+ song.link +"</td>");
+                        tr.append("<td><a onclick='deleteSong(" + song.id + ")' href='#'>Delete</a><td><a onclick='editForm(" + song.id + ")' href='#'>Edit</a></td>");
+                        tr.attr('id', song.id);
+                        $('#rows').append(tr);
 
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    var result = JSON.parse(this.responseText);
-                    console.log(result);
-                    // for(var i=0;i<result.message.length;i++){
-                    //     msg.innerHTML += result.message[i];
-                    // }
-                    form.artist.value = "";
-                    form.track.value = "";
-                    form.link.value = "";
-                    var tr = document.createElement('tr');
-                    for(var j in result.data){
-                        var td = document.createElement('td');
-                        td.innerHTML = result.data[j];
-                        tr.appendChild(td);
+                    },
+                    error: function(data) {
+                        var errors = data.responseJSON;
+                        for(var i in errors.errors){
+                            $('#msg').append("<p>"+errors.errors[i][0]+"</p>");
+                        }
+                        clearMsg();
                     }
-                    var del = document.createElement("td");
-                    var edit = document.createElement("td");
-                    del.innerHTML = "<a onclick='deleteSong(" + result.data.id + ")' href='#'>delete</a>";
-                    edit.innerHTML = "<a onclick='editForm(" + result.data.id + ")' href='#'>edit</a>";
-                    tr.appendChild(del);
-                    tr.appendChild(edit);
-                    tbody.appendChild(tr);
-                    clearMsg();
-                }
-            }
-
-            xhr.open("post", "api/save", true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.setRequestHeader('Authorization', 'Bearer ' + api);
-            xhr.send(JSON.stringify(song));
+                });
         }
+
 
         // Fillling the form for editing
         function editForm(id){
             edit_form.style.display = "block";
-
+            save_form.style.display = "none";
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     var song = JSON.parse(this.responseText).data;
-                    console.log(song);
                     var form = document.forms[2];
                     form.id.value = song.id;
                     form.artist.value = song.artist;
@@ -164,73 +150,56 @@
 
         // Edit song
         function editSong(form){
+
             var song = {};
             song.id = form.id.value;
             song.artist = form.artist.value;
             song.track = form.track.value;
             song.link = form.link.value;
-
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    var response = JSON.parse(this.responseText);
-                    if(Array.isArray(response.message)){
-                        for(var i=0;i<response.message.length;i++){
-                            msg.innerHTML += response.message[i];
-                        }
-                    }
+            $.ajax({
+                type: "POST",
+                url: "api/edit",
+                data: song,
+                dataType: "json",
+                success: function (data){
+                    alert('Updated');
+                    var song = data.data;
                     form.artist.value = "";
                     form.track.value = "";
                     form.link.value = "";
                     edit_form.style.display = "none";
-                    get();
+                    save_form.style.display= "block";
+                    getSongs();
+                },
+                error: function(data) {
+                    var errors = data.responseJSON;
+                    for(var i in errors.errors){
+                        $('#msg').append("<p>"+errors.errors[i][0]+"</p>");
+                    }
                     clearMsg();
                 }
-            }
-            xhr.open("post", "/api/edit", true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.setRequestHeader('Authorization', 'Bearer ' + api);
-            xhr.send(JSON.stringify(song));
+            });
         }
 
-        // Get all songs
-        function get() {
-            tbody.innerHTML = "";
-
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    var songs = JSON.parse(this.responseText).data;
-                    console.log(songs);
-
-                    for (var i = 0; i < songs.length; i++) {
-
-                        var tr = document.createElement('tr');
-
-                        for (var j in songs[i]) {
-                            if ((j == 'updated_at') || (j == 'created_at')) continue;
-                            var td = document.createElement("td");
-                            td.innerHTML = songs[i][j];
-                            tr.appendChild(td);
+        function getSongs(){
+            $.ajax({
+                type: "GET",
+                url: "api/get",
+                success: function (data){
+                    $("#rows").html("");
+                    var songs = data.data;
+                    for(var i=0;i<songs.length;i++) {
+                        var tr = $("<tr />");
+                        var song = songs[i];
+                        for(var j in song){
+                            tr.append("<td>" + song[j] + "</td>");
                         }
-                                @if(Auth::check())
-                        var del = document.createElement("td");
-                        var edit = document.createElement("td");
-                        // var obj = res[i];
-                        del.innerHTML = "<a onclick='deleteSong(" + songs[i].id + ")' href='#'>delete</a>";
-                        edit.innerHTML = "<a onclick='editForm(" + songs[i].id + ")' href='#'>edit</a>";
-                        tr.appendChild(del);
-                        tr.appendChild(edit);
-                        @endif
-                        //tr.setAttribute('id', $songs[i].id);
-                        tbody.appendChild(tr);
+                        tr.append("<td><a onclick='deleteSong(" + song.id + ")' href='#'>Delete</a><td><a onclick='editForm(" + song.id + ")' href='#'>Edit</a></td>");
+                        tr.attr('id', song.id);
+                        $('#rows').append(tr);
                     }
                 }
-            }
-            console.log(api);
-            xhr.open("get", "api/get", true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + api);
-            xhr.send();
+            });
         }
 
         // Clear message
@@ -239,6 +208,6 @@
                 msg.innerHTML = "";
             }, 3000);
         }
-    get();
+    getSongs();
     </script>
 @stop
