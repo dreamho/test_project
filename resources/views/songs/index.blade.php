@@ -77,24 +77,25 @@
         var edit_form = document.getElementById('edit_form');
         var save_form = document.getElementById('save_form');
         var msg = document.getElementById('msg');
-        var api = document.getElementById('api').content;
 
         // Delete song
-        function deleteSong(id) {
-            //alert('in');
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
+        function deleteSong(id){
+            $.ajax({
+                type: "GET",
+                url: "api/delete/"+id,
+                success: function (data){
                     alert('Deleted');
                     getSongs();
+                },
+                error: function(data) {
+                    var errors = data.responseJSON;
+                    for(var i in errors.errors){
+                        $('#msg').append("<p>"+errors.errors[i][0]+"</p>");
+                    }
+                    clearMsg();
                 }
-            }
-            xhr.open("get", "/api/delete/" + id, true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + api);
-            xhr.send();
-
+            });
         }
-
         // Save song
         function saveSong(form){
 
@@ -132,20 +133,25 @@
         function editForm(id){
             edit_form.style.display = "block";
             save_form.style.display = "none";
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    var song = JSON.parse(this.responseText).data;
+            $.ajax({
+                type: "GET",
+                url: "api/edit/"+id,
+                success: function (data){
+                    var song = data.data;
                     var form = document.forms[2];
                     form.id.value = song.id;
                     form.artist.value = song.artist;
                     form.track.value = song.track;
                     form.link.value = song.link;
+                },
+                error: function(data) {
+                    var errors = data.responseJSON;
+                    for(var i in errors.errors){
+                        $('#msg').append("<p>"+errors.errors[i][0]+"</p>");
+                    }
+                    clearMsg();
                 }
-            }
-            xhr.open("get", "/api/edit/" + id, true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + api);
-            xhr.send(null);
+            });
         }
 
         // Edit song
