@@ -69,7 +69,7 @@
             </table>
         </div>
     </div>
-    <div id="all"></div>
+    <div id="paginate"></div>
     <script type="text/javascript">
 
 
@@ -186,7 +186,7 @@
                 }
             });
         }
-
+        // Get all songs
         function getSongs(){
             $.ajax({
                 type: "GET",

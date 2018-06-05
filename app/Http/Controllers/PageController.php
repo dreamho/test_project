@@ -19,7 +19,7 @@ class PageController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        return view('test');
     }
 
     /**
