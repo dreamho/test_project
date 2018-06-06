@@ -12,7 +12,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">Quantox</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -27,20 +27,26 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">Pricing</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown link
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
+            {{--<li class="nav-item dropdown">--}}
+                {{--<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+                    {{--Dropdown link--}}
+                {{--</a>--}}
+                {{--<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">--}}
+                    {{--<a class="dropdown-item" href="#">Action</a>--}}
+                    {{--<a class="dropdown-item" href="#">Another action</a>--}}
+                    {{--<a class="dropdown-item" href="#">Something else here</a>--}}
+                {{--</div>--}}
+            {{--</li>--}}
         </ul>
     </div>
 </nav>
 <div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12 text-center"><h1>Quantox Hotel</h1></div>
+
+    </div>
 
     <div class="row">
 
@@ -54,13 +60,13 @@
                 </ol>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img class="d-block w-100" src="images/index.jpeg" alt="First slide">
+                        <img class="d-block w-100" src="images/1.jpg" alt="First slide">
                     </div>
                     <div class="carousel-item">
-                        <img class="d-block w-100" src="images/index.jpeg" alt="Second slide">
+                        <img class="d-block w-100" src="images/2.jpg" alt="Second slide">
                     </div>
                     <div class="carousel-item">
-                        <img class="d-block w-100" src="images/index.jpeg" alt="Third slide">
+                        <img class="d-block w-100" src="images/3.jpg" alt="Third slide">
                     </div>
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -77,9 +83,12 @@
     </div>
     <hr>
     <div class="row">
+        <div class="col-md-6"><h3>Contact us</h3></div>
+        <div class="col-md-6"><h3>Visit us</h3></div>
+    </div>
+    <div class="row">
 
         <div class="col-md-6">
-            <h1>Contact us</h1>
             <form>
                 <label>Your name</label><br>
                 <input type="text" name="name" class="form-control" ><br>
@@ -99,9 +108,17 @@
     <hr>
     <div class="row">
 
-        <div class="col-md-6"><h4>Address: Kneza Mihaila 112</h4></div>
-
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <div class="dl-horizontal">
+                <dd>Address:</dd>
+                <dt>Kneza Mihaila 112, Kragujevac</dt>
+            </div>
+        </div>
     </div>
+
+
+    @yield('content')
 
    <div class="row">
 
